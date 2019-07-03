@@ -1,0 +1,6 @@
+/venv
+/noise-detector/data
+**/.ipynb_checkpoints
+**/__pycache__
+**/audio_samples
+.idea/
