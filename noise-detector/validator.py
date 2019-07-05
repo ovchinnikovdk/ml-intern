@@ -6,8 +6,9 @@ from torch.autograd import Variable
 from datautils import batch_iterator
 from model import NoiseDetector
 import sys
+import os
 
-def validate(model_path='trained/cnn.pth', data_path='data/val'):
+def validate(model_path=os.path.join('trained', 'cnn.pth'), data_path=os.path.join('data', 'val')):
     model = torch.load(model_path).cpu()
     predicted = np.array([])
     labels = np.array([])

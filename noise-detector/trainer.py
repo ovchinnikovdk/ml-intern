@@ -32,6 +32,6 @@ def train(net, path, batch_size=100, n_epochs=30, lr=1e-3):
 if __name__ == '__main__':
     model = NoiseDetector().cuda()
     if len(sys.argv) != 4:
-        train(model, 'data/train', batch_size=256, n_epochs=50, lr=1e-2)
+        train(model, os.path.join('data', 'train'), batch_size=256, n_epochs=10, lr=1e-2)
     else:
         train(model, sys.argv[0], int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3]))
