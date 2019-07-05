@@ -51,7 +51,34 @@ def reshape_mel(mel, shape=(80, 80)):
         mel = np.pad(mel, ((0, 0), (offset, shape[1] - mel.shape[1] - offset)), "reflect")
     return norm_mel(mel)
 
+
 def norm_mel(mel):
     mel_min = np.min(mel)
     mel_max = np.max(mel)
     return (mel - mel_min) / (mel_max - mel_min)
+
+
+def dataloader(data_path=os.path.join('data', 'train'), size=5000):
+    noisy_dir = os.path.join(data_path, 'noisy')
+    clean_dir = os.path.join(data_path, 'clean')
+    noisy_lst = os.listdir(noisy_dir)
+    clean_lst = os.listdir(clean_dir)
+    data, labels = [], []
+    for i in range(len(noisy_lst)):
+        path = os.path.join(noisy_dir, noisy_lst[i])
+        files = os.listdir(path)
+        for j in range(len(files)):
+            data.append(os.path.join(path, files[j]))
+            labels.append(1)
+    for i in range(len(clean_lst)):
+        path = os.path.join(clean_dir, clean_lst[i])
+        files = os.listdir(path)
+        for j in range(len(files)):
+            data.append(os.path.join(path, files[j]))
+            labels.append(0)
+    data, labels = np.array(data), np.array(labels)
+    idx = np.array(range(len(data)))
+    np.random.shuffle(idx)
+    x = np.array([np.ravel(reshape_mel(np.load(data[idx[i]]).astype('float32'), shape=(100, 80))) for i in range(len(idx[:size]))])
+    y = np.array([labels[idx[i]] for i in range(len(idx[:size]))])
+    return x, y
