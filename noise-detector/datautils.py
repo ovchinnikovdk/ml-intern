@@ -24,7 +24,7 @@ def batch_iterator(batch_size, data_path, shape):
     data, labels = np.array(data), np.array(labels)
     idx = np.array(range(len(data)))
     np.random.shuffle(idx)
-    for i in range(0, len(idx), batch_size):
+    for i in range(0, len(idx[:10000]), batch_size):
         x = np.stack([reshape_mel(np.load(data[idx[j]]), shape).astype('float32')[None] for j in
                       range(i, min(i + batch_size, len(data)))], 0)
         y = np.stack([labels[idx[j]] for j in range(i, min(i + batch_size, len(data)))], 0)
@@ -49,13 +49,13 @@ def reshape_mel(mel, shape=(80, 80)):
         diff = shape[1] - mel.shape[1]
         offset = np.random.randint(diff)
         mel = np.pad(mel, ((0, 0), (offset, shape[1] - mel.shape[1] - offset)), "reflect")
-    return norm_mel(mel)
+    return mel
 
 
 def norm_mel(mel):
     mel_min = np.min(mel)
     mel_max = np.max(mel)
-    return (mel - mel_min) / (mel_max - mel_min)
+    return (mel - mel_min) / (mel_max - mel_min + 0.01)
 
 
 def dataloader(data_path=os.path.join('data', 'train'), size=5000):

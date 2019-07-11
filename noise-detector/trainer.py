@@ -5,12 +5,14 @@ from torch.optim import Adam
 from datautils import batch_iterator
 from model import NoiseDetector
 import sys
+import os
+from tqdm import tqdm
+import time
 
-
-def train(net, path, batch_size=100, n_epochs=30, lr=1e-3):
+def train(net, path, batch_size=100, n_epochs=30, lr=1e-4):
     optimizer = Adam(net.parameters(), lr=lr)
     loss = torch.nn.BCELoss()
-    for i in range(n_epochs):
+    for i in tqdm(range(n_epochs), desc='Training epochs'):
         sum_loss = 0
         for x, y in batch_iterator(batch_size=batch_size, data_path=path, shape=net.input_shape):
             x = Variable(torch.Tensor(x)).cuda()
@@ -32,6 +34,6 @@ def train(net, path, batch_size=100, n_epochs=30, lr=1e-3):
 if __name__ == '__main__':
     model = NoiseDetector().cuda()
     if len(sys.argv) != 4:
-        train(model, os.path.join('data', 'train'), batch_size=256, n_epochs=10, lr=1e-2)
+        train(model, os.path.join('data', 'train'), batch_size=256, n_epochs=10, lr=1e-4)
     else:
         train(model, sys.argv[0], int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3]))
